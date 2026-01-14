@@ -1,0 +1,4 @@
+ingest/*
+!ingest/.gitkeep
+models/*
+!models/.gitkeep

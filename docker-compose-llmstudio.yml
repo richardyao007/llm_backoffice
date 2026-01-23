@@ -1,0 +1,14 @@
+services:
+  llmstudio:
+    image: h2oairelease/h2oai-llmstudio-app:latest
+    container_name: llmstudio
+    runtime: nvidia
+    restart: always
+    ports:
+      - "10101:10101"
+    volumes:
+      - ~/llmstudio_mnt:/mount
+    environment:
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+    shm_size: 64g
+    init: true

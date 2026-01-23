@@ -1,0 +1,93 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+      - ollama_blobs:/root/.ollama/models/blobs
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  rag-web-ui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: rag-web-ui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+
+      - ENABLE_RAG=true
+      - RAG_EMBEDDING_ENGINE=ollama
+      - RAG_EMBEDDING_MODEL=nomic-embed-text
+      - RAG_EMBEDDING_DIM=768
+      - VECTOR_DB=qdrant
+      - QDRANT_URI=http://qdrant:6333
+      - WEBUI_NAME=My RAG WebUI
+
+  anythingllm:
+    image: mintplexlabs/anythingllm:latest
+    container_name: anythingllm
+    ports:
+      - "3001:3001"
+    cap_add:
+      - SYS_ADMIN
+    environment:
+      - STORAGE_DIR=/app/server/storage
+      - JWT_SECRET=15ebc16a433b4469648cb3fcd1eabcb8cdec2373ef4ab488305b3b5502da5d83  # ← 必须改成你自己的强随机字符串！
+      - LLM_PROVIDER=ollama
+      - OLLAMA_BASE_PATH=http://ollama:11434
+      - EMBEDDING_ENGINE=ollama
+      - EMBEDDING_BASE_PATH=http://ollama:11434
+      - EMBEDDING_MODEL_PREF=nomic-embed-text
+      - VECTOR_DB=qdrant
+      - QDRANT_ENDPOINT=http://qdrant:6333
+      - OLLAMA_MODEL_PREF=qwen2.5:7b-instruct
+    volumes:
+      - anythingllm_storage:/app/server/storage
+    depends_on:
+      - ollama
+      - qdrant
+    restart: unless-stopped
+
+  post-train-ui:
+    build: ./post-train-ui
+    container_name: post-train-ui
+    ports:
+      - "8501:8501"
+    volumes:
+      - ollama_blobs:/models/blobs
+      - ./post-train-ui:/app
+      - ./llama.cpp:/llama.cpp
+      - /home/ubuntu/llmstudio_mnt:/h2o-output:ro
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - rag-web-ui
+      - post-train-ui
+      - anythingllm
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+  qdrant_data:
+  ollama_blobs:
+  anythingllm_storage:

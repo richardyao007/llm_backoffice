@@ -1,0 +1,133 @@
+services:
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    # ports:
+    #   - "11434:11434"
+    volumes:
+      - ./models:/root/.ollama/models
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant
+    container_name: qdrant
+    # ports:
+    #   - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: dify-postgres
+    environment:
+      POSTGRES_USER: dify
+      POSTGRES_PASSWORD: dify
+      POSTGRES_DB: dify
+    volumes:
+      - dify_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dify -d dify"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    container_name: dify-redis
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  # ========= API =========
+  dify-api:
+    image: langgenius/dify-api:0.7.3
+    container_name: dify-api
+    command: >
+      bash -c "
+      python -m celery -A app.celery worker -l info &
+      bash /app/api/docker/entrypoint.sh
+      "
+    # ports:
+    #   - "${API_PORT}:5001"
+    environment:
+      MODE: api
+      WORKER_ENABLED: true
+      DATABASE_URL: postgresql://dify:dify@postgres:5432/dify
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: dify
+      DB_PASSWORD: dify
+      DB_DATABASE: dify
+      REDIS_URL: redis://redis:6379/0
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      VECTOR_STORE: qdrant
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_API_KEY:
+      QDRANT_GRPC_ENABLED: false
+      LLM_PROVIDER: ollama
+      OLLAMA_BASE_URL: http://ollama:11434
+      SECRET_KEY: fjO+gzUKICj3EUTcR/Ui2A/7mr8CUUuznJTIlO+GrEXXqJA2S2B0YjkK
+      CONSOLE_API_URL: http://44.213.33.161
+      CONSOLE_WEB_URL: http://44.213.33.161
+      SERVICE_API_URL: http://44.213.33.161
+      APP_WEB_URL: http://44.213.33.161
+      APP_API_URL: http://44.213.33.161
+      FILES_URL: http://44.213.33.161/files
+      FILES_ACCESS_TIMEOUT: 300
+      WEB_API_CORS_ALLOW_ORIGINS: http://44.213.33.161
+      CONSOLE_CORS_ALLOW_ORIGINS: http://44.213.33.161
+      STORAGE_TYPE: local
+      DEBUG: false
+      SQLALCHEMY_ECHO: false
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      qdrant:
+        condition: service_started
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+    # env_file:
+    #   - ./api/.env
+
+  dify-web:
+    image: langgenius/dify-web:0.7.3
+    container_name: dify-web
+    # ports:
+    #   - "${WEB_PORT}:3000"
+    environment:
+      REACT_APP_API_BASE_URL: http://44.213.33.161
+      CONSOLE_API_URL: http://44.213.33.161
+      API_URL: http://44.213.33.161
+      SUPPORTED_LANGUAGES: ja
+      APP_WEB_URL: http://44.213.33.161
+      APP_API_URL: http://44.213.33.161
+    depends_on:
+      - dify-api
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: dify-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - dify-web
+      - dify-api
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+  qdrant_data:
+  dify_postgres:
+  redis_data:

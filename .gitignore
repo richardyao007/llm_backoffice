@@ -1,0 +1,6 @@
+models/*
+!models/.gitkeep
+llama.cpp/
+convert_csv/*
+!convert_csv/.gitkeep
+.env

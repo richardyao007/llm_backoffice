@@ -121,19 +121,33 @@ if st.button("🚀 変換＆Ollama登録を開始", use_container_width=True):
     st.success("✅ 量子化完了")
 
     # ---- 3. Modelfile 作成 ----
+#     modelfile_content = f"""FROM /root/.ollama/models/blobs/{final_gguf.name}
+# TEMPLATE \"\"\"
+# {{{{ if .System }}}}<|im_start|>system
+# {{{{ .System }}}}<|im_end|>
+# {{{{ end }}}}
+# <|im_start|>user
+# {{{{ .Prompt }}}}<|im_end|>
+# <|im_start|>assistant
+# \"\"\"
+# PARAMETER stop "<|im_end|>"
+# PARAMETER stop "<|im_start|>"
+# PARAMETER temperature 0.7
+# PARAMETER top_p 0.9
+# """
+
     modelfile_content = f"""FROM /root/.ollama/models/blobs/{final_gguf.name}
-TEMPLATE \"\"\"
-{{{{ if .System }}}}<|im_start|>system
-{{{{ .System }}}}<|im_end|>
-{{{{ end }}}}
-<|im_start|>user
-{{{{ .Prompt }}}}<|im_end|>
+TEMPLATE """{{"""{{""" if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
 <|im_start|>assistant
-\"\"\"
+"""
 PARAMETER stop "<|im_end|>"
 PARAMETER stop "<|im_start|>"
 PARAMETER temperature 0.7
 PARAMETER top_p 0.9
+PARAMETER repeat_penalty 1.05
 """
 
     modelfile_path = MODEL_DIR / f"{ollama_name}.Modelfile"

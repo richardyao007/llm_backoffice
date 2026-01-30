@@ -71,7 +71,7 @@ services:
       - "10101:10101"
     volumes:
       - /home/ubuntu/llmstudio_mnt:/mount
-      - /home/ubuntu/llmstudio_data:/workspace
+      # - /home/ubuntu/llmstudio_data:/workspace
     environment:
       - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
     shm_size: 64g

@@ -59,27 +59,27 @@ services:
     depends_on:
       - rag-web-ui
       - post-train-ui
-      - llmstudio
+      # - llmstudio
     restart: unless-stopped
 
-  llmstudio:
-    image: h2oairelease/h2oai-llmstudio-app:latest
-    container_name: llmstudio
-    runtime: nvidia
-    restart: unless-stopped
-    ports:
-      - "10101:10101"
-    volumes:
-      - /home/ubuntu/llmstudio_mnt:/mount
-      # - /home/ubuntu/llmstudio_data:/workspace
-    environment:
-      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-    shm_size: 64g
-    init: true
-    ulimits:
-      nofile:
-        soft: 1048576
-        hard: 1048576
+  # llmstudio:
+  #   image: h2oairelease/h2oai-llmstudio-app:latest
+  #   container_name: llmstudio
+  #   runtime: nvidia
+  #   restart: unless-stopped
+  #   ports:
+  #     - "10101:10101"
+  #   volumes:
+  #     - /home/ubuntu/llmstudio_mnt:/mount
+  #     # - /home/ubuntu/llmstudio_data:/workspace
+  #   environment:
+  #     - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+  #   shm_size: 64g
+  #   init: true
+  #   ulimits:
+  #     nofile:
+  #       soft: 1048576
+  #       hard: 1048576
 
 
 

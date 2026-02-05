@@ -45,6 +45,8 @@ services:
     container_name: tika
     ports:
       - "9998:9998"
+    environment:
+      - TIKA_OCR_LANGUAGE=jpn+eng
     restart: unless-stopped
 
   post-train-ui:

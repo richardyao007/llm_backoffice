@@ -49,6 +49,7 @@ services:
       - "9998:9998"
     environment:
       - TIKA_OCR_LANGUAGE=jpn+eng
+      - TIKA_PDF_OCR_STRATEGY=OCR_AND_TEXT_EXTRACTION
     restart: unless-stopped
 
   docling:

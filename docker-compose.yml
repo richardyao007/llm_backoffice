@@ -27,7 +27,8 @@ services:
       - OLLAMA_BASE_URL=http://ollama:11434
       - ENABLE_RAG=true
       - RAG_EMBEDDING_ENGINE=ollama
-      - RAG_EMBEDDING_MODEL=nomic-embed-text
+      # - RAG_EMBEDDING_MODEL=nomic-embed-text
+      - RAG_EMBEDDING_MODEL=text-embedding-3-small
       - RAG_EMBEDDING_DIM=768
       - VECTOR_DB=qdrant
       - QDRANT_URI=http://qdrant:6333

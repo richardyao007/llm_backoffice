@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-PDF_DIR="./pdf/1"
-TXT_DIR="./txt/1"
+BASE_DIR=$(dirname "$0")
+
+PDF_DIR="$BASE_DIR/pdf/1"
+TXT_DIR="$BASE_DIR/txt/1"
 
 mkdir -p "$TXT_DIR"
 

@@ -1,0 +1,156 @@
+
+Invoice Zoom Video Communications Inc. 
+55 Almaden Blvd, 6th Floor
+
+San Jose, CA 95113
+
+Invoice Date:
+Invoice #:
+
+Payment Terms:
+Due Date:
+
+Account Number:
+Currency:
+
+Account Information:
+
+Feb 23, 2022
+INV134485895
+Due Upon Receipt
+Feb 23, 2022
+7013596226
+JPY
+株式会社SoVa
+
+Sold To Address: 千代田区麹町3-7-9, センダビル2F
+千代田区, 東京都 1020083 
+Japan
+
+daiki.kijima@sovagroup.jp
+
+Bill To Address: 千代田区麹町3-7-9, センダビル2F
+千代田区, 東京都 1020083 
+Japan
+
+daiki.kijima@sovagroup.jp
+
+Business Registration Number: 00098
+
+   
+
+Purchase Order Number:
+
+Customer VAT/Tax Number: 
+
+Zoom W-9
+
+*日付は米国太平洋標準時 (PST)
+
+Charge Details
+
+C H A R G E  D E S C R I P T I O N S U B S C R I P T I O N  P E R I O D S U B T O T A L T A X E S ,  F E E S  &  
+S U R C H A R G E S T O T A L
+
+Charge Name:  Standard Pro 
+Monthly -- Proration 
+
+Quantity: 2
+Unit Price: JPY2,000
+
+Feb 23, 2022-Mar 10, 2022 JPY2,286 JPY229 JPY2,515  
+
+Charge Name:  Standard Pro 
+Monthly -- Proration Credit 
+
+Quantity: 1
+Unit Price: JPY2,000
+
+Feb 23, 2022-Mar 10, 2022 (JPY1,143) (JPY114) (JPY1,257)  
+
+Subtotal JPY1,143 
+
+Total (Including Taxes, Fees & 
+Surcharges)
+
+JPY1,258  
+
+Invoice Balance JPY0 
+
+https://support.zoom.us/hc/en-us/articles/201080605-W-9-Wire-Transfer-Instructions
+
+
+Invoice
+
+Taxes, Fees & Surcharge Details
+
+C H A R G E
+N A M E
+
+T A X ,  F E E  O R  
+S U R C H A R G E
+
+N A M E J U R I S D I C T I O N C H A R G E  A M O U N T
+T A X ,  F E E  O R  S U R C H A R G E  
+
+A M O U N T
+
+Standard Pro Monthly Consumption Tax  
+10.000%
+
+Federal (JPY1,143) (JPY114)  
+
+Standard Pro Monthly Consumption Tax  
+10.000%
+
+Federal JPY2,286 JPY229  
+
+Total (Including Taxes, Fees & Surcharges) JPY115  
+
+Transactions
+
+Invoice Total JPY1,258
+
+T R A N S A C T I O N
+D A T E
+
+T R A N S A C T I O N  
+N U M B E R
+
+T R A N S A C T I O N  
+T Y P E D E S C R I P T I O N
+
+A P P L I E D  
+A M O U N T
+
+Feb 23, 2022 P-151446900 Payment (JPY1,258)
+
+Invoice Balance JPY0
+
+        Need help understanding your invoice?
+
+This plan includes products with monthly and/or yearly subscription periods. The subscription period for each plan, 
+and the total charge, JPY1,143 (plus applicable taxes and regulatory fees), per subscription period for that product 
+are set out above in the Charge Details section. Unless you cancel, your subscription(s) will auto-renew each 
+subscription period and each subscription period thereafter, at the price(s) listed above (plus any taxes and regulatory 
+fees applicable at the time of renewal) and your payment method on file at zoom.us/billing will be charged. You can 
+cancel auto-renewal anytime, but you must cancel by the last day of your current subscription period to avoid being 
+charged for the next subscription period. You will not be able to cancel your ''base plan'' (Zoom Meetings, Zoom 
+Phone, or Zoom Rooms) without first canceling all other subscriptions in your plan. If you cancel, you will not receive 
+a refund for the remainder of your then-current subscription period. You can cancel by navigating to zoom.us/billing 
+and clicking ''Cancel Subscription,'' clicking through the prompts, and then clicking to confirm cancellation. Should 
+Zoom change its pricing, it will provide you with notice, and you may be charged the new price for subsequent 
+subscription.
+
+C L I C K  H E R E
+
+https://support.zoom.us/hc/en-us/articles/360057516312-Understanding-your-invoice-
+
+
+Invoice
+
+ 
+
+Zoom Video Communications, Inc. collects and pays consumption tax.
+
+

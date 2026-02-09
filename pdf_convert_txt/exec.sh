@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-PDF_DIR="./pdf"
-TXT_DIR="./txt"
+PDF_DIR="./pdf/1"
+TXT_DIR="./txt/1"
 
 mkdir -p "$TXT_DIR"
 

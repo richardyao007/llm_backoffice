@@ -1,20 +1,20 @@
 import streamlit as st
 import fitz
 import requests
+import zipfile
+import io
 
 # =========================
 # 基础设置
 # =========================
 st.set_page_config(page_title="PDF→RAG字段化", layout="centered")
-st.title("🚀 PDF 自動字段化＆RAG準備（単独ファイルダウンロード）")
+st.title("🚀 PDF 自動字段化＆RAG準備")
 
 MAX_UPLOAD = 10
-
-# ⚠️ Docker 内访问 ollama 必须用服务名
 OLLAMA_API = "http://ollama:11434/v1/completions"
 
 # =========================
-# 上传
+# 上传区
 # =========================
 uploaded_files = st.file_uploader(
     "📄 アップロード PDF（最大10個）",
@@ -28,22 +28,23 @@ uploaded_files = st.file_uploader(
 if uploaded_files:
 
     if len(uploaded_files) > MAX_UPLOAD:
-        st.warning(f"⚠️ 一度にアップロードできるPDFは最大 {MAX_UPLOAD} 件です")
+        st.warning(f"⚠️ 最大 {MAX_UPLOAD} 件まで")
         st.stop()
 
-    st.write("📂 選択されたファイル:")
+    st.subheader("📂 選択されたファイル")
     for f in uploaded_files:
         st.write("-", f.name)
 
     progress = st.progress(0)
     total = len(uploaded_files)
 
+    results = {}
+
     for i, pdf_file in enumerate(uploaded_files):
 
-        st.markdown(f"---")
+        st.markdown("---")
         st.write(f"📄 処理中: {pdf_file.name}")
 
-        # 更新进度条
         progress.progress(i / total)
 
         # =====================
@@ -54,18 +55,14 @@ if uploaded_files:
             pdf_text = "\n".join(
                 [page.get_text("text") for page in doc]
             ).strip()
-
         except Exception as e:
             st.error(f"❌ PDF解析失敗: {e}")
             continue
 
         if not pdf_text:
-            st.warning(f"⚠️ PDF 为空: {pdf_file.name}")
+            st.warning(f"⚠️ 空PDF: {pdf_file.name}")
             continue
 
-        # =====================
-        # 构造 Prompt
-        # =====================
         prompt = f"""
 企業ID：
 請求書番号：
@@ -89,7 +86,7 @@ if uploaded_files:
 テキスト：
 {pdf_text}
 
-⚠️ 必ずこのフォーマットで出力してください
+⚠️ 必ずこのフォーマットで出力
 """
 
         payload = {
@@ -100,42 +97,64 @@ if uploaded_files:
         }
 
         # =====================
-        # LLM 调用
+        # LLM
         # =====================
         try:
-            with st.spinner("🤖 LLM 抽出中..."):
+            with st.spinner("🤖 LLM抽出中..."):
 
                 r = requests.post(
                     OLLAMA_API,
                     json=payload,
-                    timeout=600   # 防止无限卡死
+                    timeout=600
                 )
 
                 r.raise_for_status()
                 result = r.json()
 
-                standardized_text = result.get(
-                    "completion", ""
-                ).strip()
+                text = result.get("completion", "").strip()
 
         except Exception as e:
-            st.error(f"❌ LLM 抽出失敗: {e}")
+            st.error(f"❌ LLM失敗: {e}")
             continue
 
-        # =====================
-        # 下载
-        # =====================
-        if standardized_text:
+        if text:
+            results[pdf_file.name.replace(".pdf", ".txt")] = text
+            st.success(f"✅ 完成: {pdf_file.name}")
+        else:
+            st.warning(f"⚠️ LLM返却なし: {pdf_file.name}")
+
+    progress.progress(1.0)
+
+    # =========================
+    # 下载区
+    # =========================
+    if results:
+
+        st.markdown("---")
+        st.subheader("📦 ダウンロード")
+
+        # 单文件下载
+        for filename, content in results.items():
 
             st.download_button(
-                label=f"📥 ダウンロード {pdf_file.name.replace('.pdf', '.txt')}",
-                data=standardized_text,
-                file_name=pdf_file.name.replace(".pdf", ".txt"),
+                label=f"📥 {filename}",
+                data=content,
+                file_name=filename,
                 mime="text/plain"
             )
 
-        else:
-            st.warning(f"⚠️ LLM 返却なし: {pdf_file.name}")
+        # ZIP 打包
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as z:
 
-    progress.progress(1.0)
-    st.success("🎉 全てのPDF処理が完了しました！")
+            for filename, content in results.items():
+                z.writestr(filename, content)
+
+        st.download_button(
+            label="📦 一括ZIPダウンロード",
+            data=zip_buffer.getvalue(),
+            file_name="rag_results.zip",
+            mime="application/zip"
+        )
+
+        st.success("🎉 全処理完了！")

@@ -27,4 +27,4 @@ COPY . /app
 
 EXPOSE 8501
 
-CMD ["streamlit","run","app.py","--server.address=0.0.0.0","--server.baseUrlPath=train","--server.enableXsrfProtection=false"]
+CMD ["streamlit","run","app.py","--server.address=0.0.0.0","--server.baseUrlPath=convert","--server.enableXsrfProtection=false"]

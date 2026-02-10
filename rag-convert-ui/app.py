@@ -3,6 +3,7 @@ import fitz
 import requests
 import zipfile
 import io
+import json
 
 # =========================
 # 基础设置
@@ -15,7 +16,7 @@ OLLAMA_API = "http://ollama:11434/api/generate"
 MODEL = "qwen2.5:7b-instruct"
 
 # =========================
-# 分块函数（防止超长PDF炸模型）
+# 分块函数
 # =========================
 def split_text(text, chunk_size=3000):
     return [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
@@ -49,14 +50,18 @@ if uploaded_files:
 
         progress.progress(i / total)
 
-        # PDF → TEXT
-        doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
-        pdf_text = "\n".join(
-            [page.get_text("text") for page in doc]
-        ).strip()
+        # ========= PDF读取 =========
+        try:
+            doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
+            pdf_text = "\n".join(
+                [page.get_text("text") for page in doc]
+            ).strip()
+        except Exception as e:
+            st.error(f"❌ PDF解析失敗: {e}")
+            continue
 
         if not pdf_text:
-            st.warning("⚠️ 空PDF")
+            st.warning("⚠️ 空PDF（スキャンPDFの可能性）")
             continue
 
         chunks = split_text(pdf_text)
@@ -64,9 +69,13 @@ if uploaded_files:
         output_box = st.empty()
         full_output = ""
 
+        # ========= LLM处理 =========
         for idx, chunk in enumerate(chunks):
 
             prompt = f"""
+以下の項目を必ず抽出してください。
+存在しない場合は「不明」と記載。
+
 企業ID：
 請求書番号：
 領収書番号：
@@ -88,8 +97,6 @@ if uploaded_files:
 
 テキスト：
 {chunk}
-
-⚠️ 必ずこのフォーマットで出力
 """
 
             payload = {
@@ -114,13 +121,11 @@ if uploaded_files:
                         if not line:
                             continue
 
-                        data = line.decode("utf-8")
+                        data = json.loads(line.decode("utf-8"))
 
-                        if '"response"' in data:
-                            import json
-                            j = json.loads(data)
-                            token = j.get("response", "")
+                        token = data.get("response", "")
 
+                        if token:
                             full_output += token
                             output_box.markdown(full_output)
 
@@ -128,9 +133,15 @@ if uploaded_files:
                 st.error(f"❌ LLM失敗: {e}")
                 continue
 
+        # ========= 结果 =========
         if full_output.strip():
-            results[pdf_file.name.replace(".pdf", ".txt")] = full_output
+
+            txt_name = pdf_file.name.replace(".pdf", ".txt")
+
+            results[txt_name] = full_output
+
             st.success(f"✅ 完成: {pdf_file.name}")
+
         else:
             st.warning(f"⚠️ LLM返却なし: {pdf_file.name}")
 
@@ -144,6 +155,7 @@ if uploaded_files:
         st.markdown("---")
         st.subheader("📦 ダウンロード")
 
+        # 单文件下载
         for filename, content in results.items():
 
             st.download_button(
@@ -153,6 +165,7 @@ if uploaded_files:
                 mime="text/plain"
             )
 
+        # ZIP下载
         zip_buffer = io.BytesIO()
 
         with zipfile.ZipFile(zip_buffer, "w") as z:

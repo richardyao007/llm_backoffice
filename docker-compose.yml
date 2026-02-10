@@ -82,6 +82,17 @@ services:
     depends_on:
       - ollama
     restart: unless-stopped
+  
+  rag-convert-ui:
+    build: ./rag-convert-ui
+    container_name: rag-convert-ui
+    ports:
+      - "8502:8501"
+    volumes:
+      - ./rag-convert-ui:/app
+    depends_on:
+      - ollama
+    restart: unless-stopped
 
   nginx:
     image: nginx:alpine
@@ -93,6 +104,7 @@ services:
     depends_on:
       - rag-web-ui
       - post-train-ui
+      - rag-convert-ui
       # - llmstudio
     restart: unless-stopped
 

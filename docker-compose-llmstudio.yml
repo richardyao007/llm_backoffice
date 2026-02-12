@@ -10,6 +10,7 @@ services:
       - ~/llmstudio_mnt:/mount
     environment:
       - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+      - WAVE_ALLOW_INSECURE_HOST=true
     shm_size: 64g
     init: true
     networks:

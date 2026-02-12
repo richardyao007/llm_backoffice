@@ -4,8 +4,8 @@ services:
     container_name: llmstudio
     runtime: nvidia
     restart: always
-    ports:
-      - "10101:10101"
+    # ports:
+    #   - "10101:10101"
     volumes:
       - ~/llmstudio_mnt:/mount
     environment:

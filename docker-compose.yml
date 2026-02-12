@@ -8,6 +8,7 @@ services:
       - ollama_data:/root/.ollama
       - ollama_blobs:/root/.ollama/models/blobs
     restart: unless-stopped
+    gpus: all
 
   qdrant:
     image: qdrant/qdrant

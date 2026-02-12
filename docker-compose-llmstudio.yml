@@ -11,7 +11,7 @@ services:
     environment:
       - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
       - WAVE_ALLOW_INSECURE_HOST=true
-      - WAVE_PASSWORD=a2Vpb2VjMjA=
+      - WAVE_PASSWORD=admin
     shm_size: 64g
     init: true
     networks:
